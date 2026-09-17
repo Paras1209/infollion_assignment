@@ -1,0 +1,107 @@
+================================================================================
+LOG FORENSIC ANALYSIS REPORT
+================================================================================
+
+1. DATA OVERVIEW
+----------------------------------------
+   Total web.log entries: 101,502
+   Total worker.log entries: 28,710
+   Web log time range: 2026-07-02 00:00:01.331000 to 2026-07-02 23:59:57.627000
+   Worker log time range: 2026-07-02 00:00:12.957000 to 2026-07-02 23:59:55
+
+2. REQUEST CORRELATION ANALYSIS
+----------------------------------------
+   Matched requests (web + worker): 27,917
+   Web only (no worker completion): 72,083
+   Worker only (no web record): 0
+   Failure rate (web requests without worker): 72.08%
+
+3. FAILED REQUESTS ANALYSIS
+----------------------------------------
+   Total failed/incomplete requests: 72,083
+   Incident start time: 2026-07-02 00:00:01.331000
+   Unique affected users: 49,661
+   Status code distribution:
+      - Status 200.0: 71,773
+      - Status 401.0: 118
+      - Status 404.0: 192
+   Endpoint distribution (top 10):
+      - /products: 25,990
+      - /product/{id}: 15,076
+      - /cart: 12,037
+      - /search: 11,009
+      - /api/user: 7,971
+   HTTP method distribution:
+      - GET: 60,046
+      - POST: 12,037
+
+4. WORKER ERROR ANALYSIS
+----------------------------------------
+   Total worker errors: 3,178
+   Error types:
+      - AnalyticsUploadTimeout: 793
+   By component:
+      - worker: 2,385
+      - metrics-worker: 793
+
+5. ENDPOINT STATISTICS
+----------------------------------------
+   Requests by endpoint:
+      - /api/user: 7,971
+      - /cart: 12,037
+      - /checkout: 9,875
+      - /login: 10,044
+      - /orders: 7,998
+      - /product/{id}: 15,076
+      - /products: 25,990
+      - /search: 11,009
+
+6. HTTP STATUS CODE DISTRIBUTION
+----------------------------------------
+   Status 200.0: 71,773 (70.7%)
+   Status 202.0: 27,917 (27.5%)
+   Status 401.0: 118 (0.1%)
+   Status 404.0: 192 (0.2%)
+
+7. TEMPORAL ANALYSIS
+----------------------------------------
+   Failed requests by hour:
+      Hour 00:00 - 713 failures
+      Hour 01:00 - 483 failures
+      Hour 02:00 - 293 failures
+      Hour 03:00 - 246 failures
+      Hour 04:00 - 280 failures
+      Hour 05:00 - 404 failures
+      Hour 06:00 - 762 failures
+      Hour 07:00 - 1,418 failures
+      Hour 08:00 - 2,241 failures
+      Hour 09:00 - 3,088 failures
+      Hour 10:00 - 4,075 failures
+      Hour 11:00 - 4,445 failures
+      Hour 12:00 - 5,051 failures
+      Hour 13:00 - 4,955 failures
+      Hour 14:00 - 4,634 failures
+      Hour 15:00 - 4,653 failures
+      Hour 16:00 - 4,923 failures
+      Hour 17:00 - 5,424 failures
+      Hour 18:00 - 5,891 failures
+      Hour 19:00 - 5,816 failures
+      Hour 20:00 - 4,960 failures
+      Hour 21:00 - 3,647 failures
+      Hour 22:00 - 2,325 failures
+      Hour 23:00 - 1,356 failures
+   Error bursts detected (5-min windows with 10+ failures):
+      - 2026-07-02 00:00:00: 72 failures
+      - 2026-07-02 00:05:00: 62 failures
+      - 2026-07-02 00:10:00: 50 failures
+      - 2026-07-02 00:15:00: 49 failures
+      - 2026-07-02 00:20:00: 64 failures
+      - 2026-07-02 00:25:00: 55 failures
+      - 2026-07-02 00:30:00: 50 failures
+      - 2026-07-02 00:35:00: 70 failures
+      - 2026-07-02 00:40:00: 56 failures
+      - 2026-07-02 00:45:00: 68 failures
+
+================================================================================
+END OF REPORT
+================================================================================
