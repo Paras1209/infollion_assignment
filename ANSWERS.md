@@ -1,39 +1,34 @@
 # Infollion Assignment-1 Answers
 
 ## 1. When did the problem start? Include the timestamp and the evidence you used.
-the problem start at 2026-07-02 14:32:40(from web.log file). we are saying this because when we segregate error logs from info logs, we see that there are two types of error, one is metric error( which can be because metric is not getting update) and another is upstream call failed request( whose request id match with checkout endpoint requests in web.log ). and as mentioned orders are getting placed but some never appeared in system, so there is problem in processing those orders after checkout. 
+Ans: The problem started at 2026-07-02 14:32:40(from web.log file). I am saying this because when I segregated error logs from info logs, I got two types of errors, one is metric error( which can be because metric is not getting update) and another is upstream call failed request( whose request id match with checkout endpoint requests in web.log ). And as mentioned orders are getting placed but some never appeared in system, so there is problem in processing those orders after checkout. 
 
 ## 2. Which endpoint is affected? Support your answer with evidence from the logs.
-ans: /checkout endpoint is affected. as 100% actual incident failures target the checkout endpoint . in logs there are 2385 failed asynchronous checkout transactions which has 202 status in web.log but dropped or failed in worker.log
+Ans: /checkout endpoint is affected. As 100% actual incident failures target the checkout endpoint . In logs there are 2385 failed asynchronous checkout transactions which has 202 status in web.log but dropped or failed in worker.log
 
 ## 3. What do the failing requests have in common? Identify the pattern and support it with numbers.
-ans: there are multiple things that is common among failing requests. some are:
+Ans: There are multiple things that are common among failing requests. Some are:
 1. All requests have status code 202 in web.log file
 2. All failing requests are trying to connect to same upstream server with ip 10.0.3.44:8443
-3. 2385 checkout transaction requests got failed
-4. All 100% failed request share the same error signature. 
+3. 2385 checkout transaction requests got failed.
+4. All 100% failed requests share the same error signature. 
 
 
 ## 4. How many distinct users were affected?
-ans: 2,335 distinct users were impacted by failed checkout orders
+Ans: 2,335 distinct users were impacted by failed checkout orders.
 
 ## Bonus: Is there anything in the logs that suggests the root cause?
-ans: Root cause is upstream network reset issue when background worker is trying to connect with the upstream ip 10.0.3.44:8443. Because of this customer requests get 202 status for their request which makes user believe that their order got placed. but background worker is getting failed silently to prcess the order because of which that order never got stored in the system. 
+Ans: Root cause of this problem is upstream network reset issue when background worker is trying to connect with the upstream ip 10.0.3.44:8443. Because of this customer requests get 202 status for their request which makes user believe that their order got placed. But background worker is getting failed silently to process the order because of which that order never got stored in the system. 
 
 ## Data of first failed transaction
 
 02-07-2026  14:32:40	INFO	request	43438	method=POST path=/checkout status=202 latency_ms=36 user_id=59787 request_id=16ce72300cf58a32	POST	/checkout	202	36	59787	16ce72300cf58a32	32:42.7	ERROR	worker	12361	upstream call failed request_id=16ce72300cf58a32 err=ECONNRESET upstream=10.0.3.44:8443 (retries exhausted)				ECONNRESET	10.0.3.44:8443	both	matched
 
-```
-In below attached screenshot you can clearly see the count of worker error calculated using the script
 
-![alt text](image.png)
-```
-
-
-## Script ( Script is generated using ai tools with mannual review )
+## Script ( Script is generated using ai tools with manual review )
 
 ```python
+
 #!/usr/bin/env python3
 """
 Log Forensic Analysis Script
@@ -904,13 +899,15 @@ if __name__ == "__main__":
         interactive_analysis(results)
     
     print("\nAnalysis complete!")
+    
 ```
 
 ## Investigation Process
-1. First i read top 20-30logs of each file, and i thought that the logs with error in worker.log file are the errors. 
-2. Then i took help from ai assistants and created an script to analyse the log by correlating them using request_id.
-3. Then using the same script i generated the different csv files for different purpose so that it gets easy for me to visualise the data
-4. Script was also generated the analysis report. 
-5. After running the script, i got worker_errors.csv file and correlated_requests.csv file from which i got to know about the failed worker errors on applying sorting and various filters.
-6. exact count of logs is finded out by script. 
-7. At first i was thinking there will be only one error( which is asked in the task) but when i got the worker_erro.csv file and applied filters then i got to see there are total two types of error in the worker.log file. 
+1. First I examined the structure of both logs file to understand what details does each log contain.
+2. Wrote a Python script using regex and pandas to extract key value pairs to convert the unstructured data into structured data for better visual understanding.
+3. request_id was common for logs across web.log and worker.log, so I used it to cross correlate logs. By correlating, I got web requests and their corresponding worker log.
+4. I got two types of error in the files.
+5. Investigated metric-worker error but it turned out that it was not related to the problem. Then i analysed another worker-error which was related to our real problem.
+6. Sorted the failed checkout requests in the csv file to get the first occurrence of failing request.
+7. After examining the worker errors, I noticed that all failing requests are using same shared resource and same error signature. 
+8. Extracted distinct user_id from failed requests
